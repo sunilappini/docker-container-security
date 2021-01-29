@@ -1,13 +1,20 @@
+
 #FROM alpine:latest
-FROM alpine:3.13.0
+FROM alpine:3.7
+
+ARG CREATED=x
+
+LABEL Name=SunilAppini \
+      Version=1.0 \
+      Maintainer="Sunil"
 
 SHELL ["/bin/ash","-o","pipefail","-c"]
 
 RUN apk add --no-cache \
-    curl \
-    git \
-    openssh-client \
-    rsync
+    curl=7.61.1-r3 \
+    git=2.15.4-r0 \
+    openssh-client=7.5_p1-r10 \
+    rsync=3.1.3-r0
 
 ENV VERSION 0.64.0
 WORKDIR /usr/local/src
@@ -21,5 +28,18 @@ RUN curl -L \
 
 WORKDIR /src
 
+USER hugo
+CMD ["/bin/ash"]
+
 EXPOSE 1313
-HEALTHCHECK CMD curl --fail http://localhost:1313/ || exit 1
+
+HEALTHCHECK --interval=10s --timeout=10s --start-period=15s CMD hugo env || exit 1
+
+LABEL org.opencontainers.image.title="Hugo Builder"
+LABEL org.opencontainers.image.created="$CREATED_AT"
+LABEL org.opencontainers.image.source="https://github.com/sunilappini/docker-container-security"
+LABEL org.opencontainers.image.version="1.0"
+LABEL org.opencontainers.image.revision=1.0.1"
+LABEL org.opencontainers.image.licenses="SMARSH"
+LABEL org.opencontainers.image.url="http://www.smarsh.com"
+
